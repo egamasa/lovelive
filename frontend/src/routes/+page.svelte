@@ -116,10 +116,12 @@
               </div>
               <div class="ml-2 flex-1">
                 <a href={video.link} target="_blank">
-                  <p class="text-sm line-clamp-3">{video.title}</p>
+                  <p class="text-sm line-clamp-3">
+                    {#if isNew(video.date)}<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
+                    {video.title}
+                  </p>
                 </a>
                 <div class="mt-1 text-sm text-gray-500">
-                  {#if isNew(video.date)}<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
                   <time>{formatDate(video.date)}</time>
                 </div>
               </div>
@@ -143,10 +145,12 @@
               </div>
               <div class="ml-2 flex-1">
                 <a href={note.link} target="_blank">
-                  <p class="text-sm line-clamp-3">{note.title}</p>
+                  <p class="text-sm line-clamp-3">
+                    {#if isNew(note.date)}<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
+                    {note.title}
+                  </p>
                 </a>
                 <div class="mt-1 text-sm text-gray-500">
-                  {#if isNew(note.date)}<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
                   <time>{formatDate(note.date)}</time>
                 </div>
               </div>
