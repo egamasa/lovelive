@@ -2,7 +2,7 @@ require 'aws-sdk-s3'
 require 'aws-sdk-ssm'
 require 'json'
 require 'net/http'
-require 'rss'
+require 'rexml/document'
 require 'time'
 require 'uri'
 
@@ -69,10 +69,21 @@ end
 
 def fetch_rss(url)
   xml = Net::HTTP.get(URI.parse(url))
+  rss_feed = REXML::Document.new(xml)
 
-  feed = RSS::Parser.parse(xml)
+  rss_contents = []
+  rss_feed
+    .elements
+    .each('rss/channel/item') do |item|
+      rss_contents << {
+        title: item.elements['title'].text,
+        link: item.elements['link'].text,
+        date: item.elements['pubDate'].text,
+        thumbnail: item.elements['media:thumbnail'].text.gsub(/width=\d+/, 'width=200')
+      }
+    end
 
-  feed.channel.items.sort_by { |item| item.pubDate }.reverse
+  rss_contents
 end
 
 def save_to_bucket(bucket_name, object_key, hash_data)
@@ -176,10 +187,10 @@ def main
         i += 1
 
         contents[:notes][rss_name_sym] << {
-          title: item.title,
-          link: item.link,
-          date: item.pubDate.utc.iso8601,
-          thumbnail: ''
+          title: item[:title],
+          link: item[:link],
+          date: Time.parse(item[:date]).utc.iso8601,
+          thumbnail: item[:thumbnail]
         }
       end
     end
