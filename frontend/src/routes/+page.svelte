@@ -1,5 +1,6 @@
 <script>
   import { browser } from '$app/environment';
+  import { onMount } from 'svelte';
 
   const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -70,7 +71,9 @@
     }
   };
 
-  getContents();
+  onMount(() => {
+    getContents();
+  });
 </script>
 
 <svelte:head>
