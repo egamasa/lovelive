@@ -81,7 +81,7 @@
 </svelte:head>
 
 <div class="mx-auto p-3 lg:p-6">
-  <h1 class="text-3xl font-bold">蓮ノ空ダッシュボード</h1>
+  <h1 class="text-3xl font-bold">🪷蓮ノ空ダッシュボード</h1>
   <h2>Powered by <a href="https://orangeliner.net" target="_blank" class="underline">orangeliner.net</a></h2>
 
   <div class="pt-3">
