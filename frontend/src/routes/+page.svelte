@@ -78,6 +78,17 @@
 
 <svelte:head>
   <title>蓮ノ空ダッシュボード - orangeliner.net</title>
+  <description>Link！Like！ラブライブ！／蓮ノ空女学院スクールアイドルクラブの新着コンテンツを一覧で確認</description>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="蓮ノ空ダッシュボード" />
+  <meta property="og:description" content="Link！Like！ラブライブ！／蓮ノ空女学院スクールアイドルクラブの新着コンテンツを一覧で確認" />
+  <meta property="og:url" content="https://hasu.orangeliner.net" />
+  <meta property="og:image" content="https://hasu.orangeliner.net/ogp.png" />
+  <meta property="og:site_name" content="orangeliner.net" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="蓮ノ空ダッシュボード">
+  <meta name="twitter:description" content="Link！Like！ラブライブ！／蓮ノ空女学院スクールアイドルクラブの新着コンテンツを一覧で確認">
+  <meta name="twitter:site" content="@asagiri96mc" />
 </svelte:head>
 
 <div class="mx-auto p-3 lg:p-6">
