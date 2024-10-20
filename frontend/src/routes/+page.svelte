@@ -24,6 +24,11 @@
     return diffDays <= 7;
   }
 
+  const openExtUrl = (event, url) => {
+    event.preventDefault();
+    window.open(url, '_blank');
+  };
+
   const videoCategories = [
     {key: 'all', label: 'YouTube 新着'},
     {key: 'mirapaRadio', label: 'みらくら視聴覚室ラジオ'},
@@ -78,7 +83,7 @@
 
   <div class="pt-3">
     <p>Link！Like！ラブライブ！／蓮ノ空女学院スクールアイドルクラブ の新着コンテンツを一覧で確認できます。（各カテゴリ最大5件）</p>
-    <p>公開1週間以内のコンテンツには <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span> が表示されます。</p>
+    <p>公開1週間以内のコンテンツには <span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span> が表示されます。</p>
     <p>YouTube動画にはプレミア公開前（指定日時より視聴可能）のものも含まれており、サムネイルが表示されない場合があります。</p>
   </div>
 
@@ -98,9 +103,11 @@
       <div class="border rounded-lg p-3 shadow-lg">
         <h3 class="text-lg font-bold">{category.label}</h3>
 
-        <ul class="divide-y divide-gray-100">
+        <ul class="divide-y divide-gray-200">
           {#each videos[category.key] as video}
-            <li class="flex py-2">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+            <li class="flex py-2 cursor-pointer hover:bg-red-50" on:click={(event) => openExtUrl(event, video.link)}>
               <div>
                 <img src={video.thumbnail} alt={video.title} width="110" class="h-15 w-30 object-cover" />
               </div>
@@ -109,7 +116,7 @@
                   <p class="text-sm line-clamp-3">{video.title}</p>
                 </a>
                 <div class="mt-1 text-sm text-gray-500">
-                  {#if isNew(video.date)}<span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
+                  {#if isNew(video.date)}<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
                   <time>{formatDate(video.date)}</time>
                 </div>
               </div>
@@ -123,9 +130,11 @@
       <div class="border rounded-lg p-3 shadow-lg">
         <h3 class="text-lg font-bold">{category.label}</h3>
 
-        <ul class="divide-y divide-gray-100 py-2">
+        <ul class="divide-y divide-gray-200 py-2">
           {#each notes[category.key] as note}
-            <li class="flex py-2">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+            <li class="flex py-2 cursor-pointer hover:bg-red-50" on:click={(event) => openExtUrl(event, note.link)}>
               <div>
                 <img src={note.thumbnail} alt={note.title} width="110" class="h-15 w-30 object-cover" />
               </div>
@@ -134,7 +143,7 @@
                   <p class="text-sm line-clamp-3">{note.title}</p>
                 </a>
                 <div class="mt-1 text-sm text-gray-500">
-                  {#if isNew(note.date)}<span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
+                  {#if isNew(note.date)}<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
                   <time>{formatDate(note.date)}</time>
                 </div>
               </div>
