@@ -61,7 +61,9 @@
 
   const getContents = async () => {
     try {
-      const response = await fetch('https://data.orangeliner.net/hasu/contents.json');
+      const response = await fetch('https://data.orangeliner.net/hasu/contents.json', {
+        cache: 'no-cache',
+      });
       const data = await response.json();
       videos = data.videos;
       notes = data.notes;
