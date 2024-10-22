@@ -47,9 +47,10 @@ def request_youtube_api(endpoint, params)
   res.is_a?(Net::HTTPSuccess) ? JSON.parse(res.body) : nil
 end
 
-def fetch_youtube_channel_videos(channel_id, search_query = nil)
+# 動画リスト取得（キーワード検索）
+def get_youtube_search_videos(channel_id, search_query = nil)
   params = {
-    part: 'snippet',
+    part: 'id',
     channelId: channel_id,
     order: 'date',
     maxResults: 10,
@@ -61,12 +62,55 @@ def fetch_youtube_channel_videos(channel_id, search_query = nil)
   request_youtube_api('search', params)
 end
 
-def fetch_youtube_playlist_videos(playlist_id)
-  params = { part: 'snippet', playlistId: playlist_id, maxResults: 10, key: @youtube_api_key }
+# 動画リスト取得（プレイリスト指定）
+def get_youtube_playlist_videos(playlist_id)
+  params = {
+    part: 'contentDetails',
+    playlistId: playlist_id,
+    maxResults: 10,
+    key: @youtube_api_key
+  }
 
   request_youtube_api('playlistItems', params)
 end
 
+# 動画情報取得
+def get_youtube_videos(video_ids)
+  params = { part: 'snippet', id: video_ids.join(','), key: @youtube_api_key }
+
+  request_youtube_api('videos', params)
+end
+
+# 動画情報抽出
+def extract_videos_info(videos)
+  videos_info = []
+
+  i = 0
+  videos['items'].each do |video|
+    break if i >= MAX_CONTENTS_COUNT
+
+    # 除外: 非公開動画
+    next if video['snippet']['title'] == 'Private video'
+
+    # 除外: 活動記録（外国語版）
+    next if video['snippet']['title'].include?('English Subtitles')
+    next if video['snippet']['title'].include?('简体字幕')
+    next if video['snippet']['title'].include?('繁體字幕')
+
+    i += 1
+    videos_info << {
+      title: video['snippet']['title'],
+      link: "https://www.youtube.com/watch?v=#{video['id']}",
+      date: video['snippet']['publishedAt'],
+      thumbnail: video['snippet']['thumbnails']['default']['url'],
+      upcoming: video['snippet']['liveBroadcastContent'] == 'upcoming'
+    }
+  end
+
+  videos_info
+end
+
+# RSSフィード取得
 def fetch_rss(url)
   xml = Net::HTTP.get(URI.parse(url))
   rss_feed = REXML::Document.new(xml)
@@ -120,23 +164,11 @@ def main
     search_list_name_sym = search_list_name.to_sym
     contents[:videos][search_list_name_sym] = []
 
-    videos = fetch_youtube_channel_videos(YOUTUBE_CHANNEL_ID, search_query)
+    channel_videos = get_youtube_search_videos(YOUTUBE_CHANNEL_ID, search_query)
+    video_ids = channel_videos['items'].map { |video| video['id']['videoId'] } if channel_videos
 
-    if videos
-      i = 0
-      videos['items'].each do |video|
-        break if i >= MAX_CONTENTS_COUNT
-        next if video['snippet']['title'] == 'Private video'
-        i += 1
-
-        contents[:videos][search_list_name_sym] << {
-          title: video['snippet']['title'],
-          link: "https://www.youtube.com/watch?v=#{video['id']['videoId']}",
-          date: video['snippet']['publishTime'],
-          thumbnail: video['snippet']['thumbnails']['default']['url']
-        }
-      end
-    end
+    videos = get_youtube_videos(video_ids) if video_ids
+    contents[:videos][search_list_name_sym] = extract_videos_info(videos) if videos
   end
 
   # YouTube (プレイリスト指定)
@@ -152,23 +184,12 @@ def main
     playlist_name_sym = playlist_name.to_sym
     contents[:videos][playlist_name_sym] = []
 
-    videos = fetch_youtube_playlist_videos(playlist_id)
+    playlist_videos = get_youtube_playlist_videos(playlist_id)
+    video_ids =
+      playlist_videos['items'].map { |video| video['contentDetails']['videoId'] } if playlist_videos
 
-    if videos
-      i = 0
-      videos['items'].each do |video|
-        break if i >= MAX_CONTENTS_COUNT
-        next if video['snippet']['title'] == 'Private video'
-        i += 1
-
-        contents[:videos][playlist_name_sym] << {
-          title: video['snippet']['title'],
-          link: "https://www.youtube.com/watch?v=#{video['snippet']['resourceId']['videoId']}",
-          date: video['snippet']['publishedAt'],
-          thumbnail: video['snippet']['thumbnails']['default']['url']
-        }
-      end
-    end
+    videos = get_youtube_videos(video_ids) if video_ids
+    contents[:videos][playlist_name_sym] = extract_videos_info(videos) if videos
   end
 
   # note (RSS)
