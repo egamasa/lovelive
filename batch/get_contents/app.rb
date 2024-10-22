@@ -163,7 +163,12 @@ def main
   contents = { videos: {}, notes: {} }
 
   # YoutTube (キーワード検索)
-  youtube_search_list = { all: nil, mirapaRadio: 'みらくら視聴覚室ラジオ', story: '3Dアニメ 活動記録' }
+  youtube_search_list = {
+    all: nil,
+    mirapaRadio: 'みらくら視聴覚室ラジオ',
+    seeHasu: 'せーので！はすのそら！',
+    story: '3Dアニメ 活動記録'
+  }
 
   youtube_search_list.each do |search_list_name, search_query|
     search_list_name_sym = search_list_name.to_sym
@@ -180,7 +185,6 @@ def main
   youtube_playlists = {
     withMeets: 'PLu7E7HFun3xB33SP01_NZzJpV-TiRyx0K',
     fesLive: 'PLu7E7HFun3xBqgsTabwfrJkHc0FYE5RmI',
-    seeHasu: 'PLu7E7HFun3xC0k9Jm6Z0UUf_JNRNGEfk2',
     linkNama: 'PLu7E7HFun3xA0HJsKiJVyG-9U_Lxk8BMk',
     lyricVideo: 'PLu7E7HFun3xCfBwgq2wYRNJXN9U6Q5Zyi'
   }
