@@ -53,7 +53,7 @@ def get_youtube_search_videos(channel_id, search_query = nil)
     part: 'id',
     channelId: channel_id,
     order: 'date',
-    maxResults: 10,
+    maxResults: 30,
     type: 'video',
     key: @youtube_api_key
   }
@@ -82,12 +82,17 @@ def get_youtube_videos(video_ids)
 end
 
 # 動画情報抽出
-def extract_videos_info(videos)
+def extract_videos_info(videos, search_query = nil)
   videos_info = []
 
   i = 0
   videos['items'].each do |video|
     break if i >= MAX_CONTENTS_COUNT
+
+    # 検索キーワードが動画タイトルに含まれるかチェック
+    if search_query
+      next unless video['snippet']['title'].downcase.include?(search_query.downcase)
+    end
 
     # 除外: 非公開動画
     next if video['snippet']['title'] == 'Private video'
@@ -168,7 +173,7 @@ def main
     video_ids = channel_videos['items'].map { |video| video['id']['videoId'] } if channel_videos
 
     videos = get_youtube_videos(video_ids) if video_ids
-    contents[:videos][search_list_name_sym] = extract_videos_info(videos) if videos
+    contents[:videos][search_list_name_sym] = extract_videos_info(videos, search_query) if videos
   end
 
   # YouTube (プレイリスト指定)
