@@ -76,7 +76,7 @@ end
 
 # 動画情報取得
 def get_youtube_videos(video_ids)
-  params = { part: 'snippet', id: video_ids.join(','), key: @youtube_api_key }
+  params = { part: 'snippet,liveStreamingDetails', id: video_ids.join(','), key: @youtube_api_key }
 
   request_youtube_api('videos', params)
 end
@@ -85,10 +85,7 @@ end
 def extract_videos_info(videos, search_query = nil)
   videos_info = []
 
-  i = 0
   videos['items'].each do |video|
-    break if i >= MAX_CONTENTS_COUNT
-
     # 検索キーワードが動画タイトルに含まれるかチェック
     if search_query
       next unless video['snippet']['title'].downcase.include?(search_query.downcase)
@@ -102,17 +99,49 @@ def extract_videos_info(videos, search_query = nil)
     next if video['snippet']['title'].include?('简体字幕')
     next if video['snippet']['title'].include?('繁體字幕')
 
-    i += 1
+    # upcoming（配信予定）の動画は公開日時を取得
+    if video['snippet']['liveBroadcastContent'] == 'upcoming'
+      if video['liveStreamingDetails']
+        video_date = video['liveStreamingDetails']['scheduledStartTime']
+      else
+        video_date = nil
+      end
+    else
+      video_date = video['snippet']['publishedAt']
+    end
+
     videos_info << {
       title: video['snippet']['title'],
       link: "https://www.youtube.com/watch?v=#{video['id']}",
-      date: video['snippet']['publishedAt'],
+      date: video_date,
       thumbnail: video['snippet']['thumbnails']['default']['url'],
       upcoming: video['snippet']['liveBroadcastContent'] == 'upcoming'
     }
   end
 
+  # 動画表示順ソート
   videos_info
+    .sort_by! do |video|
+      [
+        # upcoming（配信予定）を優先
+        video[:upcoming] ? 0 : 1,
+        # 公開日時 upcoming（配信予定）は昇順、それ以外は降順
+        (
+          if video[:date]
+            (
+              if video[:upcoming]
+                DateTime.parse(video[:date]).to_time.to_i
+              else
+                -DateTime.parse(video[:date]).to_time.to_i
+              end
+            )
+          else
+            Float::INFINITY
+          end
+        )
+      ]
+    end
+    .take(MAX_CONTENTS_COUNT) # 指定件数を抽出
 end
 
 # RSSフィード取得
