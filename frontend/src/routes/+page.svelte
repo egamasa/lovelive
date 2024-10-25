@@ -100,7 +100,7 @@
   <div class="pt-3">
     <p>Link！Like！ラブライブ！／蓮ノ空女学院スクールアイドルクラブ の新着コンテンツを一覧で確認できます。（各カテゴリ最大5件）</p>
     <p>公開1週間以内のコンテンツには <span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span> が表示されます。</p>
-    <p>YouTube動画にはプレミア公開前（指定日時より視聴可能）のものも含まれており、サムネイルが表示されない場合があります。</p>
+    <p>プレミア公開前（指定日時より視聴可能）のYouTube動画には <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">配信予定</span> が表示されます。</p>
   </div>
 
   <div class="pt-3">
@@ -130,7 +130,8 @@
               <div class="ml-2 flex-1">
                 <a href={video.link} target="_blank">
                   <p class="text-sm line-clamp-3">
-                    {#if isNew(video.date)}<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
+                    {#if video.upcoming}<span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">配信予定</span>
+                    {:else if isNew(video.date)}<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">New!</span>{/if}
                     {video.title}
                   </p>
                 </a>
