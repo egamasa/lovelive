@@ -135,9 +135,15 @@
                     {video.title}
                   </p>
                 </a>
-                <div class="mt-1 text-sm text-gray-500">
-                  <time>{formatDate(video.date)}</time>
-                </div>
+                {#if video.upcoming}
+                  <div class="mt-1 text-sm text-red-800 font-medium">
+                    <time>{formatDate(video.date)}</time>
+                  </div>
+                {:else}
+                  <div class="mt-1 text-sm text-gray-500">
+                    <time>{formatDate(video.date)}</time>
+                  </div>
+                {/if}
               </div>
             </li>
           {/each}
