@@ -4,5 +4,28 @@
 
 ### batch
 
+AWS Lambda
+
+#### デプロイ
+
+```
+sam build
+aws sso login
+sam deploy --profile hoge  # IAMを作成可能な権限を持つプロファイルを指定
+```
 
 ### frontend
+
+Svelte + SvelteKit + Tailwind CSS
+
+#### プレビュー
+
+```
+npm run dev
+```
+
+#### ビルド
+
+```
+npm run build
+```
