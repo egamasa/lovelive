@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
 	const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
 
-	function formatDate(date) {
+	function formatDate(date: string | Date) {
 		const d = new Date(date);
 		const year = d.getFullYear();
 		const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -15,34 +15,62 @@
 		return `${year}/${month}/${day}（${daysOfWeek[d.getDay()]}）${hours}:${minutes}`;
 	}
 
-	function isNew(date) {
+	function isNew(date: string | Date) {
 		const d = new Date(date);
 		const now = new Date();
 
-		const diffTime = Math.abs(now - d);
+		const diffTime = Math.abs(now.valueOf() - d.valueOf());
 		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
 		return diffDays <= 7;
 	}
 
-	const openExtUrl = (event, url) => {
+	const openExtUrl = (event: MouseEvent, url: string) => {
 		event.preventDefault();
 		window.open(url, '_blank');
 	};
 
-	const videoCategories = [
-		{ key: 'all', label: 'YouTube 新着' },
-		{ key: 'mirapaRadio', label: 'みらくら視聴覚室ラジオ' },
-		{ key: 'seeHasu', label: 'せーので！はすのそら！' },
-		{ key: 'withMeets', label: 'With×MEETS' },
-		{ key: 'fesLive', label: 'Fes×LIVE' },
-		{ key: 'linkNama', label: '#リンクラ生放送' },
-		{ key: 'story', label: '活動記録' },
-		{ key: 'lyricVideo', label: 'リリックビデオ' }
-	];
-	const noteCategories = [{ key: 'all', label: 'note' }];
+	interface Video {
+		title: string;
+		link: string;
+		date: string | Date;
+		thumbnail: string;
+		upcoming: boolean;
+	}
 
-	let videos = {
+	interface Videos {
+		all: Video[];
+		withMeets: Video[];
+		fesLive: Video[];
+		mirapaRadio: Video[];
+		seeHasu: Video[];
+		linkNama: Video[];
+		story: Video[];
+		lyricVideo: Video[];
+	}
+
+	interface VideoCategory {
+		key: keyof Videos;
+		label: string;
+	}
+
+	interface Note {
+		title: string;
+		link: string;
+		date: string | Date;
+		thumbnail: string;
+	}
+
+	interface Notes {
+		all: Note[];
+	}
+
+	interface NoteCategory {
+		key: keyof Notes;
+		label: string;
+	}
+
+	let videos: Videos = {
 		all: [],
 		withMeets: [],
 		fesLive: [],
@@ -53,11 +81,24 @@
 		lyricVideo: []
 	};
 
-	let notes = {
+	let notes: Notes = {
 		all: []
 	};
 
-	let lastUpdate = null;
+	let lastUpdate: Date | null = null;
+
+	const videoCategories: VideoCategory[] = [
+		{ key: 'all', label: 'YouTube 新着' },
+		{ key: 'mirapaRadio', label: 'みらくら視聴覚室ラジオ' },
+		{ key: 'seeHasu', label: 'せーので！はすのそら！' },
+		{ key: 'withMeets', label: 'With×MEETS' },
+		{ key: 'fesLive', label: 'Fes×LIVE' },
+		{ key: 'linkNama', label: '#リンクラ生放送' },
+		{ key: 'story', label: '活動記録' },
+		{ key: 'lyricVideo', label: 'リリックビデオ' }
+	];
+
+	const noteCategories: NoteCategory[] = [{ key: 'all', label: 'note' }];
 
 	const getContents = async () => {
 		try {
@@ -67,7 +108,7 @@
 			const data = await response.json();
 			videos = data.videos;
 			notes = data.notes;
-			lastUpdate = data.lastUpdate;
+			lastUpdate = new Date(data.lastUpdate);
 		} catch (error) {
 			console.error('データ取得エラー', error);
 		}
