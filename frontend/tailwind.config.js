@@ -2,8 +2,11 @@
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        emoji: ['Noto Color Emoji', 'sans-serif']
+      },
+    },
   },
   plugins: [],
 }
-
