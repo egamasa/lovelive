@@ -89,7 +89,7 @@
 
 	const videoCategories: VideoCategory[] = [
 		{ key: 'all', label: 'YouTube 新着' },
-		{ key: 'mirapaRadio', label: 'みらくら視聴覚室ラジオ' },
+		{ key: 'mirapaRadio', label: 'みらくら進路相談室ラジオ' },
 		{ key: 'seeHasu', label: 'せーので！はすのそら！' },
 		{ key: 'withMeets', label: 'With×MEETS' },
 		{ key: 'fesLive', label: 'Fes×LIVE' },
