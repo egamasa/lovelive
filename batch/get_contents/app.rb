@@ -194,7 +194,7 @@ def main
   # YoutTube (キーワード検索)
   youtube_search_list = {
     all: nil,
-    mirapaRadio: 'みらくら視聴覚室ラジオ',
+    mirapaRadio: 'みらくら進路相談室ラジオ',
     seeHasu: 'せーので！はすのそら！',
     story: '3Dアニメ 活動記録'
   }
