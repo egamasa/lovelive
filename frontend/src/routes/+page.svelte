@@ -159,7 +159,7 @@
 			が表示されます。
 		</p>
 		<p>
-			プレミア公開前（指定日時より視聴可能）のYouTube動画には
+			ライブ配信予定またはプレミア公開前のYouTube動画には
 			<span
 				class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
 			>
