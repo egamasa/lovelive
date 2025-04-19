@@ -54,6 +54,18 @@
 		label: string;
 	}
 
+	interface Book {
+		title: string;
+		author: string;
+		link: string;
+		date: string | Date;
+		thumbnail: string;
+	}
+
+	interface Books {
+		hinoshita: Book[];
+	}
+
 	interface Note {
 		title: string;
 		link: string;
@@ -81,6 +93,10 @@
 		lyricVideo: []
 	};
 
+	let books: Books = {
+		hinoshita: []
+	};
+
 	let notes: Notes = {
 		all: []
 	};
@@ -102,13 +118,19 @@
 
 	const getContents = async () => {
 		try {
-			const response = await fetch('https://data.orangeliner.net/hasu/contents.json', {
+			const contentsResponse = await fetch('https://data.orangeliner.net/hasu/contents.json', {
 				cache: 'no-cache'
 			});
-			const data = await response.json();
-			videos = data.videos;
-			notes = data.notes;
-			lastUpdate = new Date(data.lastUpdate);
+			const contentsData = await contentsResponse.json();
+			videos = contentsData.videos;
+			notes = contentsData.notes;
+			lastUpdate = new Date(contentsData.lastUpdate);
+
+			const booksResponse = await fetch('https://data.orangeliner.net/hasu/books.json', {
+				cache: 'no-cache'
+			});
+			const booksData = await booksResponse.json();
+			books = booksData;
 		} catch (error) {
 			console.error('データ取得エラー', error);
 		}
@@ -233,6 +255,39 @@
 				</ul>
 			</div>
 		{/each}
+
+		<div class="border rounded-lg p-3 shadow-lg">
+			<h3 class="text-lg font-bold">日野下図書館</h3>
+			<p class="text-sm text-gray-500">Amazonアフィリエイトリンクを含みます</p>
+			<ul class="divide-y divide-gray-200 py-2">
+				{#each books.hinoshita.reverse().slice(0, 4) as book}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+					<li class="flex py-2 cursor-pointer hover:bg-red-50" on:click={(event) => openExtUrl(event, book.link)}>
+						<div>
+							<img src={book.thumbnail} alt={book.title} width="80" class="h-15 w-30 object-cover" />
+						</div>
+						<div class="ml-2 flex-1">
+							<a href={book.link} target="_blank">
+								<p class="text-sm line-clamp-3">
+									{#if isNew(book.date)}
+										<span
+											class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10"
+										>
+											New!
+										</span>
+									{/if}
+									{book.title}</p>
+								<p class="mt-1 text-sm line-clamp-3">{book.author}</p>
+							</a>
+							<div class="mt-1 text-sm text-gray-500">
+								<time>{formatDate(book.date)}</time>
+							</div>
+						</div>
+					</li>
+				{/each}
+			</ul>
+		</div>
 
 		{#each noteCategories as category}
 			<div class="border rounded-lg p-3 shadow-lg">
