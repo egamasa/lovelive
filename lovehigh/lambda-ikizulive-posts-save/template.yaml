@@ -15,6 +15,8 @@ Parameters:
   S3Path:
     Type: String
     Default: 'ikizulive-posts'
+  NotifySnsTopicArn:
+    Type: String
 
 Resources:
   IkizulivePostsSaveFunction:
@@ -31,9 +33,12 @@ Resources:
           RSS_FEED_URL: !Ref RssFeedUrl
           S3_BUCKET: !Ref S3BucketName
           S3_PATH: !Ref S3Path
+          SNS_TOPIC_ARN: !Ref NotifySnsTopicArn
       Policies:
         - S3WritePolicy:
             BucketName: !Ref S3BucketName
+        - SNSPublishMessagePolicy:
+            TopicName: !Select [5, !Split [':', !Ref NotifySnsTopicArn]]
       Events:
         DailySchedule:
           Type: Schedule

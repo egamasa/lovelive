@@ -1,4 +1,5 @@
 require 'aws-sdk-s3'
+require 'aws-sdk-sns'
 require 'date'
 require 'json'
 require 'logger'
@@ -6,7 +7,20 @@ require 'net/http'
 require 'rexml/document'
 require 'time'
 
-def process_posts(event, logger)
+def send_sns_notification(status, message, logger)
+  return unless ENV['SNS_TOPIC_ARN']
+
+  message[:service] = 'IkizulivePostsSave'
+  message[:status] = status
+
+  sns = Aws::SNS::Client.new
+  sns.publish(topic_arn: ENV['SNS_TOPIC_ARN'], message: message.to_json)
+  logger.info("SNS notification sent: #{status}")
+rescue => e
+  logger.warn("SNS notification failed: #{e.message}")
+end
+
+def main(event, logger)
   # 日付指定（eventから取得、なければ前日）
   target_date = event['date'] ? Date.parse(event['date']) : Date.today - 1
   logger.info("Target date: #{target_date}")
@@ -68,21 +82,39 @@ def process_posts(event, logger)
   )
 
   # JSON出力・S3アップロード
-  return if items.empty?
+  unless items.empty?
+    json_filename = "#{target_date.strftime('%Y-%m-%d')}.json"
+    json_data = JSON.pretty_generate(items)
 
-  json_filename = "#{target_date.strftime('%Y-%m-%d')}.json"
-  json_data = JSON.pretty_generate(items)
+    s3_bucket = ENV['S3_BUCKET']
+    s3_path = ENV['S3_PATH']
+    s3 = Aws::S3::Client.new
+    s3.put_object(
+      bucket: s3_bucket,
+      key: "#{s3_path}/#{target_date.strftime('%Y-%m')}/#{json_filename}",
+      body: json_data,
+      content_type: 'application/json'
+    )
+    logger.info("JSON uploaded to S3: s3://#{s3_bucket}/#{s3_path}/#{json_filename}")
+  end
 
-  s3_bucket = ENV['S3_BUCKET']
-  s3_path = ENV['S3_PATH'] || 'ikizu-live'
-  s3 = Aws::S3::Client.new
-  s3.put_object(
-    bucket: s3_bucket,
-    key: "#{s3_path}/#{target_date.strftime('%Y-%m')}/#{json_filename}",
-    body: json_data,
-    content_type: 'application/json'
-  )
-  logger.info("JSON uploaded to S3: s3://#{s3_bucket}/#{s3_path}/#{json_filename}")
+  # Amazon SNS 完了通知
+  message = {
+    fields: [
+      { name: 'Date', value: target_date.strftime('%Y-%m-%d'), inline: true },
+      { name: 'Posts count', value: filtered_count, inline: true }
+    ]
+  }
+  unless items.empty?
+    message[:fields] << {
+      name: 'File',
+      value: "s3://#{s3_bucket}/#{s3_path}/#{json_filename}",
+      inline: false
+    }
+  else
+    message[:fields] << { name: 'File', value: 'No file saved.', inline: false }
+  end
+  send_sns_notification('OK', message, logger)
 end
 
 def lambda_handler(event:, context:)
@@ -90,8 +122,13 @@ def lambda_handler(event:, context:)
   logger.level = Logger::INFO
 
   begin
-    process_posts(event, logger)
+    main(event, logger)
   rescue => e
     logger.error("Lambda execution failed: #{e.message}")
+
+    # Amazon SNS エラー通知
+    error_message = { message: e.message }
+    send_sns_notification('ERROR', error_message, logger)
+    raise e
   end
 end
