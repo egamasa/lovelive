@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Architectures:
+      - arm64
+
+Parameters:
+  RssFeedUrl:
+    Type: String
+    Default: 'https://example.com/feed.xml'
+  S3BucketName:
+    Type: String
+  S3Path:
+    Type: String
+    Default: 'ikizulive-posts'
+
+Resources:
+  IkizulivePostsSaveFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: IkizulivePostsSave
+      CodeUri: function/
+      Handler: app.lambda_handler
+      Runtime: ruby3.3
+      Timeout: 120
+      MemorySize: 128
+      Environment:
+        Variables:
+          RSS_FEED_URL: !Ref RssFeedUrl
+          S3_BUCKET: !Ref S3BucketName
+          S3_PATH: !Ref S3Path
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref S3BucketName
