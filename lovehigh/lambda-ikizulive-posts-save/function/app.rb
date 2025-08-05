@@ -88,6 +88,7 @@ def main(event, logger)
 
     s3_bucket = ENV['S3_BUCKET']
     s3_path = ENV['S3_PATH']
+    s3_key = "#{s3_path}/#{target_date.strftime('%Y-%m')}/#{json_filename}"
     s3 = Aws::S3::Client.new
     s3.put_object(
       bucket: s3_bucket,
@@ -95,7 +96,7 @@ def main(event, logger)
       body: json_data,
       content_type: 'application/json'
     )
-    logger.info("JSON uploaded to S3: s3://#{s3_bucket}/#{s3_path}/#{json_filename}")
+    logger.info("JSON uploaded to S3: s3://#{s3_bucket}/#{s3_key}")
   end
 
   # Amazon SNS 完了通知
@@ -106,11 +107,7 @@ def main(event, logger)
     ]
   }
   unless items.empty?
-    message[:fields] << {
-      name: 'File',
-      value: "s3://#{s3_bucket}/#{s3_path}/#{json_filename}",
-      inline: false
-    }
+    message[:fields] << { name: 'File', value: "s3://#{s3_bucket}/#{s3_key}", inline: false }
   else
     message[:fields] << { name: 'File', value: 'No file saved.', inline: false }
   end
