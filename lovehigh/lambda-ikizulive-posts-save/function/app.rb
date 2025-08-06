@@ -22,7 +22,8 @@ end
 
 def main(event, logger)
   # 日付指定（eventから取得、なければ前日）
-  target_date = event['date'] ? Date.parse(event['date']) : Date.today - 1
+  target_date =
+    event['date'] ? Date.parse(event['date']) : (Time.now.getlocal('+09:00').to_date - 1)
   logger.info("Target date: #{target_date}")
 
   # RSSフィード取得
