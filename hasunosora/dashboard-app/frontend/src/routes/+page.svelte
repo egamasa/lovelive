@@ -110,10 +110,10 @@
 		{ key: 'mirapaRadio', label: 'きまっし!! みらぱ！の部屋ラジオ' },
 		{ key: 'seeHasu', label: 'せーので！はすのそら！' },
 		{ key: 'membership', label: 'メンバーシップ限定動画' },
-		{ key: 'withMeets', label: 'With×MEETS' },
-		{ key: 'fesLive', label: 'Fes×LIVE' },
 		{ key: 'linkNama', label: '#リンクラ生放送' },
 		{ key: 'story', label: '活動記録' },
+		{ key: 'withMeets', label: 'With×MEETS' },
+		{ key: 'fesLive', label: 'Fes×LIVE' },
 		{ key: 'lyricVideo', label: 'リリックビデオ' }
 	];
 
@@ -280,7 +280,8 @@
 											New!
 										</span>
 									{/if}
-									{book.title}</p>
+									{book.title}
+								</p>
 								<p class="mt-1 text-sm line-clamp-3">{book.author}</p>
 							</a>
 							<div class="mt-1 text-sm text-gray-500">
