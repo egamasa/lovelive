@@ -40,7 +40,6 @@
 
 	interface Videos {
 		all: Video[];
-		withMeets: Video[];
 		fesLive: Video[];
 		mirapaRadio: Video[];
 		seeHasu: Video[];
@@ -85,7 +84,6 @@
 
 	let videos: Videos = {
 		all: [],
-		withMeets: [],
 		fesLive: [],
 		mirapaRadio: [],
 		seeHasu: [],
@@ -112,7 +110,6 @@
 		{ key: 'membership', label: 'メンバーシップ限定動画' },
 		{ key: 'linkNama', label: '#リンクラ生放送' },
 		{ key: 'story', label: '活動記録' },
-		{ key: 'withMeets', label: 'With×MEETS' },
 		{ key: 'fesLive', label: 'Fes×LIVE' },
 		{ key: 'lyricVideo', label: 'リリックビデオ' }
 	];

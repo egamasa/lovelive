@@ -213,7 +213,6 @@ def main
   # YouTube (プレイリスト指定)
   youtube_playlists = {
     membership: 'UUMOxUgvwrVfqVpyak4cuKcevQ',
-    withMeets: 'PLu7E7HFun3xB33SP01_NZzJpV-TiRyx0K',
     fesLive: 'PLu7E7HFun3xBqgsTabwfrJkHc0FYE5RmI',
     linkNama: 'PLu7E7HFun3xA0HJsKiJVyG-9U_Lxk8BMk',
     lyricVideo: 'PLu7E7HFun3xCfBwgq2wYRNJXN9U6Q5Zyi'
