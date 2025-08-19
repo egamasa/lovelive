@@ -44,6 +44,7 @@
 		fesLive: Video[];
 		mirapaRadio: Video[];
 		seeHasu: Video[];
+		membership: Video[];
 		linkNama: Video[];
 		story: Video[];
 		lyricVideo: Video[];
@@ -88,6 +89,7 @@
 		fesLive: [],
 		mirapaRadio: [],
 		seeHasu: [],
+		membership: [],
 		linkNama: [],
 		story: [],
 		lyricVideo: []
@@ -107,6 +109,7 @@
 		{ key: 'all', label: 'YouTube 新着' },
 		{ key: 'mirapaRadio', label: 'きまっし!! みらぱ！の部屋ラジオ' },
 		{ key: 'seeHasu', label: 'せーので！はすのそら！' },
+		{ key: 'membership', label: 'メンバーシップ限定動画' },
 		{ key: 'withMeets', label: 'With×MEETS' },
 		{ key: 'fesLive', label: 'Fes×LIVE' },
 		{ key: 'linkNama', label: '#リンクラ生放送' },

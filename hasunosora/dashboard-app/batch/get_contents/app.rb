@@ -53,7 +53,7 @@ def get_youtube_search_videos(channel_id, search_query = nil)
     part: 'id',
     channelId: channel_id,
     order: 'date',
-    maxResults: 30,
+    maxResults: 20,
     type: 'video',
     key: @youtube_api_key
   }
@@ -212,6 +212,7 @@ def main
 
   # YouTube (プレイリスト指定)
   youtube_playlists = {
+    membership: 'UUMOxUgvwrVfqVpyak4cuKcevQ',
     withMeets: 'PLu7E7HFun3xB33SP01_NZzJpV-TiRyx0K',
     fesLive: 'PLu7E7HFun3xBqgsTabwfrJkHc0FYE5RmI',
     linkNama: 'PLu7E7HFun3xA0HJsKiJVyG-9U_Lxk8BMk',
