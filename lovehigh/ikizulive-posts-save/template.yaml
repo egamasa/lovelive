@@ -9,7 +9,6 @@ Globals:
 Parameters:
   RssFeedUrl:
     Type: String
-    Default: 'https://example.com/feed.xml'
   S3BucketName:
     Type: String
   S3Path:
@@ -22,7 +21,7 @@ Resources:
   IkizulivePostsSaveFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: IkizulivePostsSave
+      FunctionName: ikizulive-posts-save
       CodeUri: function/
       Handler: app.lambda_handler
       Runtime: ruby3.3
@@ -40,10 +39,10 @@ Resources:
         - SNSPublishMessagePolicy:
             TopicName: !Select [5, !Split [':', !Ref NotifySnsTopicArn]]
       Events:
-        DailySchedule:
+        Schedule:
           Type: Schedule
           Properties:
-            Name: IkizulivePostsSaveDailySchedule
+            Name: ikizulive-posts-save-schedule
             Schedule: cron(30 15 * * ? *)
-            Description: 'いきづらい部！ ポスト保存（毎日0:30 JST）'
+            Description: 'いきづらい部！メンバーXアカウント ポスト保存（毎日0:30 JST）'
             Enabled: true
