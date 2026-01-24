@@ -7,17 +7,17 @@ require 'net/http'
 require 'rexml/document'
 require 'time'
 
-def send_sns_notification(status, message, logger)
+def sns_publish(status, message, logger)
   return unless ENV['SNS_TOPIC_ARN']
 
-  message[:service] = 'IkizulivePostsSave'
+  message[:service] = 'いきづらい部！ メンバーポスト保存'
   message[:status] = status
 
   sns = Aws::SNS::Client.new
   sns.publish(topic_arn: ENV['SNS_TOPIC_ARN'], message: message.to_json)
-  logger.info("SNS notification sent: #{status}")
+  logger.info("SNS publish sent: #{status}")
 rescue => e
-  logger.warn("SNS notification failed: #{e.message}")
+  logger.warn("SNS publish failed: #{e.message}")
 end
 
 def main(event, logger)
@@ -112,7 +112,7 @@ def main(event, logger)
   else
     message[:fields] << { name: 'File', value: 'No file saved.', inline: false }
   end
-  send_sns_notification('OK', message, logger)
+  sns_publish('OK', message, logger)
 end
 
 def lambda_handler(event:, context:)
@@ -126,7 +126,7 @@ def lambda_handler(event:, context:)
 
     # Amazon SNS エラー通知
     error_message = { message: e.message }
-    send_sns_notification('ERROR', error_message, logger)
+    sns_publish('ERROR', error_message, logger)
     raise e
   end
 end
