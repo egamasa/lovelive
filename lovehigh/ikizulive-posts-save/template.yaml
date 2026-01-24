@@ -36,8 +36,11 @@ Resources:
       Policies:
         - S3WritePolicy:
             BucketName: !Ref S3BucketName
-        - SNSPublishMessagePolicy:
-            TopicName: !Select [5, !Split [':', !Ref NotifySnsTopicArn]]
+        - Statement:
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: !Ref NotifySnsTopicArn
       Events:
         Schedule:
           Type: Schedule
