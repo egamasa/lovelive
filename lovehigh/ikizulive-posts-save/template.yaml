@@ -24,7 +24,7 @@ Resources:
       FunctionName: ikizulive-posts-save
       CodeUri: function/
       Handler: app.lambda_handler
-      Runtime: ruby3.3
+      Runtime: ruby3.4
       Timeout: 120
       MemorySize: 128
       Environment:
