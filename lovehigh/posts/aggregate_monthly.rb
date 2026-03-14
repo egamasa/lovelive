@@ -5,6 +5,8 @@ source_files = Dir.glob('source/*.json')
 source_posts = []
 source_files.each { |file| source_posts.concat(JSON.parse(File.read(file))) }
 
+source_posts.sort_by! { |post| post['id_str'] }
+
 grouped_posts =
   source_posts.group_by do |post|
     utc_time = Time.parse(post['created_at'])
